@@ -1,9 +1,13 @@
-const express = require('express')
+import express from 'express'
+import cors from 'cors'
+import { userRouter } from './src/Routes/userRouter.js'
+
 const app2 = express()
 
 const PORT =  3001
-const cors = require('cors')
 app2.use(cors())
+
+app2.use("/users", userRouter)
 
 app2.get('/route', (req, res) =>{
   res.status(200)

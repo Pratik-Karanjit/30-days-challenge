@@ -1,11 +1,30 @@
-// import { Router } from "express";
+import { Router } from "express";
+export let userRouter = Router()
 
-// let userRouter = Router();
+userRouter.route("/home") .post((req, res) => {
+    res.json("post response done successfully.");
+  })
+  .get((req, res) => {
+    res.json("get response done successfully.");
+  })
+  .patch((req, res) => {
+    res.json("patch response done successfully.");
+  })
+  .delete((req, res) => {
+    res.json("delete response done successfully.");
+  });
 
-// userRouter
-//   .route("/:id")
-//   .get(readUserDetails)
-//   .patch(updateUser)
-//   // .delete(isAuthenticated,isAuthorized,deleteUser);
 
-// export default userRouter;
+
+  userRouter.route("/about") .post((req, res) => {
+    res.json("post response done successfully.");
+  })
+  .get((req, res) => {
+    res.json("get response done successfully.");
+  })
+  .patch((req, res) => {
+    res.json("patch response done successfully.");
+  })
+  .delete((req, res) => {
+    res.json("delete response done successfully.");
+  });

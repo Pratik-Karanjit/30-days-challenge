@@ -5,7 +5,7 @@ userRouter.route("/home") .post((req, res) => {
     res.json("post response done successfully.");
   })
   .get((req, res) => {
-    res.json("get response done successfully.");
+    res.json("Response successfully received from get request.");
   })
   .patch((req, res) => {
     res.json("patch response done successfully.");

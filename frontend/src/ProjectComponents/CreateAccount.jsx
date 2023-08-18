@@ -9,28 +9,33 @@ import '../ProjectCss/style.css';
 
 const CreateAccount = () => {
   const navigate = useNavigate();
+  const [file, setFile] = useState(null);
+
   let initialValues = {
     fName: '',
     lName: '',
     dob: '',
     password: '',
     email: '',
-    role: 'customer',          
+    role: 'customer',
   };
 
   let onSubmit = async (info) => {
     try {
-      let result = await axios({
-        url: `http://localhost:3001/users/create`,
-        method: 'post',
-        data: info,
+      const formData = new FormData(); //FormData object to send mixed data
+      formData.append('file', file); // Append the selected file
+      formData.append('info', JSON.stringify(info)); // Append other form data as JSON
+
+      console.log('FormData:', formData); // Console log the FormData contents
+
+      let result = await axios.post(`http://localhost:3001/users/create`, formData, {
         headers: {
-          'Content-Type': 'application/json', // Set the Content-Type header
+          'Content-Type': 'multipart/form-data', // Set appropriate content type
         },
       });
       navigate('/registration-success');
     } catch (error) {
-      console.log('unable to create');
+      console.log('unable to create:', error);
     }
   };
 
@@ -139,6 +144,15 @@ const CreateAccount = () => {
                 component="div"
                 className="error-message"
               />
+              <div className="form-element-spacing">
+        <label htmlFor="file">Upload File:</label>
+        <input
+          type="file"
+          id="file"
+          onChange={(e) => setFile(e.target.files[0])} // Store the selected file in state
+          className="form-input"
+        />
+      </div>
 
               <div className="form-element-spacing">
                 <label htmlFor="role">Role:</label>

@@ -31,49 +31,104 @@ import bcrypt from "bcrypt";
 //     }
 //   });
 
-  export let createUser = expressAsyncHandler(async (req, res, next) => {
-    let data = req.body;       
-    console.log(data)                               //taking data from postman
-    data.isVerify = false                                     //we set isVerify and isDeactivate to false in code itself and not let the user decide
-    data.isDeactivate = false                                 
-    let email = data.email                                    //getting email and storing in variable
-    let user = await User.findOne({ email:email });           //Checking if the email is in DB
+  // export let createUser = expressAsyncHandler(async (req, res, next) => {
+  //   let data = req.body;       
+  //   console.log(data)                               //taking data from postman
+  //   data.isVerify = false                                     //we set isVerify and isDeactivate to false in code itself and not let the user decide
+  //   data.isDeactivate = false                                 
+  //   let email = data.email                                    //getting email and storing in variable
+  //   let user = await User.findOne({ email:email });           //Checking if the email is in DB
     
-    if (user) {                                               //If it is then show duplicate email error
-      let error = new Error("Duplicate email.");              
-      error.statusCode = 409;
-      throw error;
-    }else{                                                    //else hash the password and create User
-      let _hashPassword = await hashPassword(data.password);
-    data.password = _hashPassword;
-    let result = await User.create(req.body);
-    delete result._doc.password;                              //delete password to not show it in response
-    let infoObj = {                                           //setting infoObj and expireInfo for generating token
-      id: result._id,
-      role: result.role,
-    };
-    let expireInfo = {
-      expiresIn: "1d",
-    };
-    let token = await generateToken(infoObj, expireInfo);    //Calling the generate token function
-    await Token.create({ token });
-    let link = `${baseUrl}/verify-email?token=${token}`      //Giving link and sending it to email for email verification
-    await sendMail({
-      from: '"Pratik Karanjit" <uniquekc425@gmail.com>',         //This is the text that is shown in (sent by)
-      to: [data.email],
-      subject: "Email verification",
-      html: `<h1>
-      Verify Email 
-      <a href = "${link}">Click to verify</a>               
-      <h1>`,
-    });
+  //   if (user) {                                               //If it is then show duplicate email error
+  //     let error = new Error("Duplicate email.");              
+  //     error.statusCode = 409;
+  //     throw error;
+  //   }else{                                                    //else hash the password and create User
+  //     let _hashPassword = await hashPassword(data.password);
+  //   data.password = _hashPassword;
+  //   let result = await User.create(req.body);
+  //   delete result._doc.password;                              //delete password to not show it in response
+  //   let infoObj = {                                           //setting infoObj and expireInfo for generating token
+  //     id: result._id,
+  //     role: result.role,
+  //   };
+  //   let expireInfo = {
+  //     expiresIn: "1d",
+  //   };
+  //   let token = await generateToken(infoObj, expireInfo);    //Calling the generate token function
+  //   await Token.create({ token });
+  //   let link = `${baseUrl}/verify-email?token=${token}`      //Giving link and sending it to email for email verification
+  //   await sendMail({
+  //     from: '"Pratik Karanjit" <uniquekc425@gmail.com>',         //This is the text that is shown in (sent by)
+  //     to: [data.email],
+  //     subject: "Email verification",
+  //     html: `<h1>
+  //     Verify Email 
+  //     <a href = "${link}">Click to verify</a>               
+  //     <h1>`,
+  //   });
   
-    successResponse(res, HttpStatus.CREATED, "User created successfully", result);
-    }
+  //   successResponse(res, HttpStatus.CREATED, "User created successfully", result);
+  //   }
     
+  // });
+
+
+  export let createUser = expressAsyncHandler(async (req, res, next) => {
+    try {
+      const data = JSON.parse(req.body.info); // Parse the user data from info
+      
+      data.isVerify = false;
+      data.isDeactivate = false;
+  
+      const email = data.email;
+      const user = await User.findOne({ email: email });
+  
+      if (user) {
+        let error = new Error('Duplicate email.');
+        error.statusCode = 409;
+        throw error;
+      } else {
+        const _hashPassword = await hashPassword(data.password);
+        data.password = _hashPassword;
+  
+        let result = await User.create(data);
+  
+        if (req.file) {
+          const filePath = path.join('public', req.file.filename);
+          result.filePath = filePath; // Store the file path in the result object
+          await result.save(); // Save the updated result object
+        }
+  
+        const infoObj = {
+          id: result._id,
+          role: result.role,
+        };
+        const expireInfo = {
+          expiresIn: '1d',
+        };
+        const token = await generateToken(infoObj, expireInfo);
+        await Token.create({ token });
+  
+        const link = `${baseUrl}/verify-email?token=${token}`;
+        await sendMail({
+          from: '"Pratik Karanjit" <uniquekc425@gmail.com>',
+          to: [data.email],
+          subject: 'Email verification',
+          html: `<h1>
+            Verify Email 
+            <a href="${link}">Click to verify</a>
+            <h1>`,
+        });
+  
+        successResponse(res, HttpStatus.CREATED, 'User created successfully', result);
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Unable to create user.' });
+    }
   });
   
-  //localhost:8000/users/verify-email?token=1234234
   export let verifyEmail = expressAsyncHandler(async (req, res, next) => {
     let id = req.info.id;    //getting id from query and setting it in a variable
     // console.log(id)

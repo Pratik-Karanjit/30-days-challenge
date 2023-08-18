@@ -2,6 +2,7 @@ import { Router } from "express";
 import { checkPassword, createUser, loginUser, myProfile, readAllUser, updateMyProfile, verifyEmail } from "../controller/userController.js";
 import isAuthenticatedForEmail from "../middleware/isAuthenticatedForEmail.js";
 import isAuthenticated from "../middleware/isAuthenticated.js";
+import upload from "../middleware/uploadFiles.js";
 export let userRouter = Router()
 
 // userRouter.route("/home") .post((req, res) => {
@@ -37,6 +38,8 @@ userRouter.route("/verify-email").post(isAuthenticatedForEmail,verifyEmail);
 
   userRouter.route('/create').post(createUser).get(readAllUser);
 
+  userRouter.route('/create').post(upload.single('file'), createUser).get(readAllUser)
+  
   userRouter.route("/login").post(loginUser);
 
 userRouter.route("/my-profile").get(isAuthenticated,myProfile);

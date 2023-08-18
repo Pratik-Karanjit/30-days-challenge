@@ -7,6 +7,7 @@ const MyProfile = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+  const [profileImage, setProfileImage] = useState("");
   const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
 
@@ -29,6 +30,7 @@ const MyProfile = () => {
       setFirstName(fName);
       setLastName(lName);
       setDateOfBirth(new Date(dob).toLocaleDateString());
+      setProfileImage(`/${profileImage}`);
       setRole(role);
       setEmail(email)
     } catch (error) {
@@ -60,6 +62,14 @@ const MyProfile = () => {
         <label className="profile-label">Email:</label>
         <p className="profile-info">{email}</p>
        
+      </div>
+      <div className="profile-section">
+        <label className="profile-label">Profile Image:</label>
+        <img
+          className="profile-image"
+          src={profileImage}
+          alt="Profile"
+        />
       </div>
      
       <div className="profile-section">

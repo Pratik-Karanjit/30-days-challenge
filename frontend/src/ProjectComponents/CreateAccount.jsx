@@ -23,12 +23,12 @@ const CreateAccount = () => {
   let onSubmit = async (info) => {
     try {
       const formData = new FormData(); //FormData object to send mixed data
-      formData.append('file', file); // Append the selected file
+      formData.append('img', file); // Append the selected file
       formData.append('info', JSON.stringify(info)); // Append other form data as JSON
 
       console.log('FormData:', formData); // Console log the FormData contents
 
-      let result = await axios.post(`http://localhost:3001/users/create`, formData, {
+      let result = await axios.post(`http://localhost:3001/files/single`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data', // Set appropriate content type
         },

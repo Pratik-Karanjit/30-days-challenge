@@ -6,6 +6,8 @@ import { sendMail } from "../utils/sendMail.js";
 import { HttpStatus, baseUrl } from "../config/constant.js";
 import successResponse from "../helper/successResponse.js";
 import bcrypt from "bcrypt";
+import path from 'path';
+
 
 
 // export let pagination = expressAsyncHandler(async (req, res, next) => {
@@ -77,6 +79,7 @@ import bcrypt from "bcrypt";
   export let createUser = expressAsyncHandler(async (req, res, next) => {
     try {
       const data = JSON.parse(req.body.info); // Parse the user data from info
+      console.log(data)
       
       data.isVerify = false;
       data.isDeactivate = false;

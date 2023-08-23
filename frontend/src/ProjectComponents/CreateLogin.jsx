@@ -5,6 +5,7 @@ import FormikInput from '../Formik/FormikInput';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {setLoginInfo} from '../utils/loginInfo.js'
+import Swal from 'sweetalert2';
 
 const CreateLogin = () => {
   const navigate = useNavigate();
@@ -33,6 +34,15 @@ const CreateLogin = () => {
     password: yup.string().required('Password is required. '),
   });
 
+
+  const handleDeleteAlert = () => {
+    Swal.fire({
+      title: 'Login Error',
+      text: 'Incorrect email or password.',
+      icon: 'error',
+      confirmButtonText: 'OK',
+    });
+  };
 
 
   const handleForgotPassword = () => {
@@ -72,6 +82,8 @@ const CreateLogin = () => {
           </Form>
         )}
       </Formik>
+      {loginError && handleDeleteAlert()}
+
 
      
     </div>

@@ -6,9 +6,8 @@ import { createUser, readAllUser } from "../controller/userController.js";
 
 let fileRouter = Router();
 
-//localhost:8000/files/single
-fileRouter.route("/single").post(upload.single("img"), createUser, readAllUser, (req, res, next) => {
-    console.log(req.file, "phuto payoooooooo");
+fileRouter.route("/single").post(upload.single("img"),createUser,readAllUser, (req, res, next) => {
+    console.log(req.file, "photo.");
   let link = `localhost:3001/${req.file.filename}`;
   successResponse(res, HttpStatus.OK, "file Uploaded successfully", link);
 });

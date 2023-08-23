@@ -5,6 +5,8 @@ import reportWebVitals from './reportWebVitals';
 import WowProject from './WowProject';
 import { BrowserRouter } from "react-router-dom";
 import DataFetchingComponent from './ProjectComponents/DataFetchingComponent';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -12,7 +14,9 @@ root.render(
 <BrowserRouter>
 {/* <MyApp></MyApp> */}
 {/* <DataFetchingComponent></DataFetchingComponent> */}
+<I18nextProvider i18n={i18n}>
 <WowProject></WowProject>
+  </I18nextProvider>,
 {/* <CustomComponent></CustomComponent> */}
 </BrowserRouter>
 );

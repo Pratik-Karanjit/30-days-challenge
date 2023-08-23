@@ -13,6 +13,7 @@ import MyProfile from './ProjectComponents/MyProfile'
 import NavBar from './ProjectComponents/NavBar'
 import UpdateProfile from './ProjectComponents/UpdateProfile'
 import UpdateUserPassword from './ProjectComponents/UpdateUserPassword'
+import AdminPanel from './ProjectComponents/AdminPanel'
 const WowProject = () => {
   return (
     
@@ -31,11 +32,13 @@ const WowProject = () => {
         <Route path = "my-profile" element = {<MyProfile></MyProfile>}></Route>
         <Route path = "update-my-profile" element = {<UpdateProfile></UpdateProfile>}></Route>
         <Route path ="security" element = {<UpdateUserPassword></UpdateUserPassword>}></Route>
+        <Route path="/admin/panel" element = {<AdminPanel></AdminPanel>}></Route>
 
         <Route path = "read" element = {<ReadAllData></ReadAllData>}></Route>
         <Route path = "registration-success" element = {<RegistrationSuccess></RegistrationSuccess>}></Route>
         <Route path = "verify" element = {<VerifyEmailPage></VerifyEmailPage>}></Route>
         <Route path="verify-email" element={<VerifyEmailPage />}querystring/>
+        
 
 
 

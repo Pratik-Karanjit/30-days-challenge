@@ -58,7 +58,8 @@ import { Server } from 'socket.io';
 import adminRouter from './src/Routes/adminRouter.js';
 
 const app2 = express();
-const server = http.createServer(app2); // Create http server
+const server = http.createServer(app2);
+
 
 const io = new Server(server, {
   cors: {
@@ -95,7 +96,7 @@ io.on('connection', (socket) => {
   });
 });
 
-
 server.listen(PORT, () => {
   console.log('Server running on port', PORT);
 });
+

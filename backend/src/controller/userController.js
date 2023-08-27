@@ -9,7 +9,6 @@ import bcrypt from "bcrypt";
 import path from 'path';
 
 
-
 // export let pagination = expressAsyncHandler(async (req, res, next) => {
 //     const page = parseInt(req.query.page) || 1;
 //     const pageSize = 10;
@@ -131,6 +130,87 @@ import path from 'path';
       res.status(500).json({ message: 'Unable to create user.' });
     }
   });
+
+  // export let createUser = expressAsyncHandler(async (req, res, next) => {
+  //   try {
+  //     const data = JSON.parse(req.body.info); // Parse the user data from info
+  //     console.log(data);
+  
+  //     data.isVerify = false;
+  //     data.isDeactivate = false;
+  
+  //     const email = data.email;
+  //       // Access the Redis client from the request object
+  //       const client = req.redisClient;
+  
+  //     // Check if the email exists in the cache
+  //     client.get(`email:${email}`, async (err, cachedData) => {
+  //       if (err) {
+  //         console.error(err);
+  //         return errorResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, 'Something went wrong');
+  //       }
+  
+  //       if (cachedData) {
+  //         // Email found in cache, means it's a duplicate
+  //         let error = new Error('Duplicate email.');
+  //         error.statusCode = 409;
+  //         return next(error);
+  //       } else {
+  //         const user = await User.findOne({ email: email });
+  
+  //         if (user) {
+  //           // Store email in cache to mark it as duplicate for a certain time
+  //           client.setex(`email:${email}`, 3600, 'duplicate');
+            
+  //           let error = new Error('Duplicate email.');
+  //           error.statusCode = 409;
+  //           return next(error);
+  //         } else {
+  //           const _hashPassword = await hashPassword(data.password);
+  //           data.password = _hashPassword;
+  
+  //           let result = await User.create(data);
+  
+  //           if (req.file) {
+  //             const filePath = path.join('public', req.file.filename);
+  //             result.filePath = filePath; // Store the file path in the result object
+  //             await result.save(); // Save the updated result object
+  //           }
+  
+  //           const infoObj = {
+  //             id: result._id,
+  //             role: result.role,
+  //           };
+  //           const expireInfo = {
+  //             expiresIn: '1d',
+  //           };
+  //           const token = await generateToken(infoObj, expireInfo);
+  //           await Token.create({ token });
+  
+  //           const link = `${baseUrl}/verify-email?token=${token}`;
+  //           await sendMail({
+  //             from: '"Pratik Karanjit" <uniquekc425@gmail.com>',
+  //             to: [data.email],
+  //             subject: 'Email verification',
+  //             html: `<h1>
+  //               Verify Email 
+  //               <a href="${link}">Click to verify</a>
+  //               <h1>`,
+  //           });
+  
+  //           // Store email in cache to mark it as unique for a certain time
+  //           client.setex(`email:${email}`, 3600, 'unique');
+  //           successResponse(res, HttpStatus.CREATED, 'User created successfully', result);
+  //         }
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ message: 'Unable to create user.' });
+  //   }
+  // });
+  
+
   
   export let verifyEmail = expressAsyncHandler(async (req, res, next) => {
     let id = req.info.id;    //getting id from query and setting it in a variable
@@ -259,4 +339,47 @@ import path from 'path';
     await Token.findByIdAndDelete(tokenId);
     successResponse(res, HttpStatus.OK, "updated password successfully", result);
     }
+  });
+
+
+  export let forgetPassword = expressAsyncHandler(async (req, res, next) => {       
+    let email=req.query.email      
+    let data= await User.findOne({email})      
+    let infoObj = {                         
+      id: data._id,                          
+      role: data.role,
+    };
+    let expireInfo = {                  
+      expiresIn: "1d",
+    };
+  
+    let token = await generateToken(infoObj,expireInfo)  
+  
+     await Token.create({token})                           
+     let link = `${baseUrl}/forgot-password-reset?token=${token}`    
+  
+     await sendMail({
+      from: '"Pratik Karanjit" <uniquekc425@gmail.com>',       
+      to: [data.email],
+      subject: "Email verification",
+      html: `<h1>
+      Verify Email 
+      <a href = "${link}">Click to verify</a>               
+      <h1>`,
+    });
+    
+    
+    successResponse(res, HttpStatus.OK, "Mail sent successfully");
+  });
+  
+  
+  export let resetPassword = expressAsyncHandler(async (req, res, next) => {
+    let id = req.info.id; // Saving the id in a variable
+    let tokenId = req.token.tokenId; // Saving token id in a variable
+    let newPassword = await hashPassword(req.body.password); // Hashing the new password
+  
+    await User.findByIdAndUpdate(id, { password: newPassword }, { new: true }); 
+    await Token.findByIdAndDelete(tokenId); 
+  
+    successResponse(res, HttpStatus.OK, "Password updated successfully");
   });

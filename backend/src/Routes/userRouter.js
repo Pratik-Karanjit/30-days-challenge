@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { checkPassword, createUser, loginUser, myProfile, readAllUser, updateMyProfile, verifyEmail } from "../controller/userController.js";
+import { checkPassword, createUser, forgetPassword, loginUser, myProfile, readAllUser, resetPassword, updateMyProfile, verifyEmail } from "../controller/userController.js";
 import isAuthenticatedForEmail from "../middleware/isAuthenticatedForEmail.js";
 import isAuthenticated from "../middleware/isAuthenticated.js";
 import upload from "../middleware/uploadFiles.js";
@@ -48,6 +48,9 @@ userRouter.route("/update-my-profile").patch(isAuthenticated, updateMyProfile);
 
 userRouter.route("/update-password").patch(isAuthenticatedForEmail, checkPassword);
 
+userRouter.route("/forgot-password").get(forgetPassword);
+
+userRouter.route("/reset-password").patch(isAuthenticatedForEmail,resetPassword);
 
 
 

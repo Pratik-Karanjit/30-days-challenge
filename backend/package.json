@@ -20,6 +20,7 @@
     "mongoose": "^7.4.2",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.3",
+    "redis": "^4.6.7",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2"
   }
